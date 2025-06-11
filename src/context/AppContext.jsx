@@ -18,6 +18,14 @@ export function AppProvider({ children }) {
         localStorage.setItem('listings', JSON.stringify(listings));
     }, [user, listings]);
 
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, []);
+
+
     return (
         <AppContext.Provider value={{ user, setUser, listings, setListings }}>
             {children}

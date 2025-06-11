@@ -1,24 +1,29 @@
 // src/pages/Register.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-export default function Register() {
+function Register() {
   const [username, setUsername] = useState('');
   const [email, setEmail]     = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
 
-    // Placeholder register logic
-    console.log('Registering with:', username, email, password);
+    try {
+      await axios.post('http://localhost:5000/api/auth/register', {
+        username,
+        email,
+        password
+      });
 
-    if (username && email && password) {
       alert('Registered successfully!');
       navigate('/login');
-    } else {
-      alert('Please fill in all fields.');
+    } catch (err) {
+      console.error('Register failed:', err);
+      alert('Registration failed. Try again.');
     }
   };
 
@@ -29,34 +34,22 @@ export default function Register() {
         <div className="mb-3">
           <label className="form-label">Username</label>
           <input
-            type="text"
-            className="form-control"
-            placeholder="Your username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
+            type="text" className="form-control" value={username}
+            onChange={(e) => setUsername(e.target.value)} required />
         </div>
 
         <div className="mb-3">
           <label className="form-label">Email address</label>
           <input
-            type="email"
-            className="form-control"
-            placeholder="example@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+            type="email" className="form-control" value={email}
+            onChange={(e) => setEmail(e.target.value)} required />
         </div>
 
         <div className="mb-3">
           <label className="form-label">Password</label>
           <input
-            type="password"
-            className="form-control"
-            placeholder="Create a password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+            type="password" className="form-control" value={password}
+            onChange={(e) => setPassword(e.target.value)} required />
         </div>
 
         <button type="submit" className="btn btn-success w-100">Register</button>
@@ -65,4 +58,4 @@ export default function Register() {
   );
 }
 
-
+export default Register;
