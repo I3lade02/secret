@@ -1,40 +1,40 @@
-import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { AppContext } from '../context/AppContext';
 
 export default function Navbar() {
-    return (
-        <nav className='navbar navbar-expand-lg navbar-dark bg-dark shadow'>
-            <div className='container'>
-                <Link className='navbar-brand' to='/'>GameSwap</Link>
+  const { user, setUser } = useContext(AppContext);
+  const navigate = useNavigate();
 
-                <button 
-                    className='navbar-toggle'
-                    type='button'
-                    data-bs-toggle='collapse'
-                    data-bs-target='#navbarNav'
-                >
-                    <span className='navbar-toggler-icon'></span>
-                </button>
+  const handleLogout = () => {
+    setUser(null);
+    navigate('/');
+  };
 
-                <div className='collapse navbar-collapse' id='navbarNav'>
-                    <ul className='navbar-nav ms-auto'>
-                        <li className='nav-item'>
-                            <NavLink className='nav-link' to='/listings'>Browse listings</NavLink>
-                        </li>
-                        <li className='nav-item'>
-                            <NavLink className='nav-link' to='/profile'>My profile</NavLink>
-                        </li>
-                        <li className='nav-item'>
-                            <NavLink className='nav-link' to='/login'>Login</NavLink>
-                        </li>
-                        <li className='nav-item'>
-                            <NavLink className='nav-link' to='/register'>Register</NavLink>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    );
+  return (
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+      <div className="container">
+        <Link className="navbar-brand" to="/">GameSwap</Link>
+
+        <div className="collapse navbar-collapse">
+          <ul className="navbar-nav ms-auto">
+            <li className="nav-item"><NavLink className="nav-link" to="/listings">Listings</NavLink></li>
+            {user ? (
+              <>
+                <li className="nav-item"><NavLink className="nav-link" to="/profile">Profile</NavLink></li>
+                <li className="nav-item"><button className="btn btn-sm btn-outline-light ms-2" onClick={handleLogout}>Logout</button></li>
+              </>
+            ) : (
+              <>
+                <li className="nav-item"><NavLink className="nav-link" to="/login">Login</NavLink></li>
+                <li className="nav-item"><NavLink className="nav-link" to="/register">Register</NavLink></li>
+              </>
+            )}
+          </ul>
+        </div>
+      </div>
+    </nav>
+  );
 }
 
 
