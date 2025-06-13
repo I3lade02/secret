@@ -11,6 +11,8 @@ import ListingDetail from './pages/ListingDetail';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
+import CreateListing from './pages/CreateListing';
+import EditListing from './pages/EditListings';
 
 export default function App() {
   return (
@@ -19,8 +21,10 @@ export default function App() {
       <div className='container mt-4'>
         <Routes>
           <Route path='/' element={<Home />} />
+          <Route path='/create' element={<CreateListing />} />
           <Route path='/listings' element={<Listings />} />
           <Route path='/listing/:id' element={<ListingDetail />} />
+          <Route path='/listing/:id/edit' element={<EditListing />} />
           <Route path='/profile' element={<Profile />} />
           <Route path='/login' element={<Login />} />
           <Route path='/register'element={<Register />} />

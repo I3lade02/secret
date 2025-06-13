@@ -22,6 +22,7 @@ export default function Navbar() {
             {user ? (
               <>
                 <li className="nav-item"><NavLink className="nav-link" to="/profile">Profile</NavLink></li>
+                <li className='nav-item'><NavLink className='nav-link' to='/create'>Create listing</NavLink></li>
                 <li className="nav-item"><button className="btn btn-sm btn-outline-light ms-2" onClick={handleLogout}>Logout</button></li>
               </>
             ) : (

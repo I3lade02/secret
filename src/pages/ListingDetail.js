@@ -1,44 +1,41 @@
-import React from 'react';
-import { useParams, Link } from 'react-router-dom';
+// src/pages/ListingDetail.js
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
-export default function ListingDetail() {
-    const { id } = useParams(); //get listing ID from the URL
+function ListingDetail() {
+  const { id } = useParams();
+  const [listing, setListing] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    //Mock data
-    const listing = {
-        id, 
-        title: 'Elden Ring (PS5)',
-        category: 'Game disc',
-        platform: 'Playstation',
-        condition: 'Like new',
-        price: 39.99,
-        description: 'Includes original case and manual. Only played once',
-        seller: {
-            username: 'I3lade',
-            email: 'ondrej.ber@email.cz',
-        },
+  useEffect(() => {
+    const fetchListing = async () => {
+      try {
+        const res = await axios.get(`http://localhost:5000/api/listings/${id}`);
+        setListing(res.data);
+      } catch (err) {
+        console.error('Failed to load listing:', err);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    return (
-        <div className='container mt-4'>
-            <h2>{listing.title}</h2>
-            <p className='text-muted'>{listing.category} . {listing.platform}</p>
+    fetchListing();
+  }, [id]);
 
-            <div className='mb-3'>
-                <strong>Condition: </strong> {listing.condition}<br />
-                <strong>Price: </strong> {listing.price}<br />
-                <strong>Description: </strong> {listing.description}
-            </div>
+  if (loading) return <p className="mt-4">Loading listing...</p>;
+  if (!listing) return <p className="mt-4 text-danger">Listing not found.</p>;
 
-            <div className='border-top pt-3'>
-                <h5>Seller info</h5>
-                <p>
-                    <strong>Username: </strong> {listing.seller.username}<br />
-                    <strong>Email: </strong> {listing.seller.email}
-                </p>
-            </div>
-
-            <Link to='/listings' className='btn btn-secondary mt-3'>Back to listings</Link>
-        </div>
-    );
+  return (
+    <div className="container mt-4">
+      <h2>{listing.title}</h2>
+      <p><strong>Category:</strong> {listing.category}</p>
+      <p><strong>Platform:</strong> {listing.platform}</p>
+      <p><strong>Condition:</strong> {listing.condition}</p>
+      <p><strong>Price:</strong> {listing.price} CZK</p>
+      <p><strong>Seller:</strong> {listing.seller?.username || 'Unknown'}</p>
+    </div>
+  );
 }
+
+export default ListingDetail;
