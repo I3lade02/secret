@@ -18,7 +18,9 @@ function Profile() {
           headers: { Authorization: token }
         });
 
-        const userListings = res.data.filter(l => l.seller._id === user.id);
+        const userListings = res.data.filter(l => {
+          return l.seller && (l.seller._id === user.id || l.seller === user.id);
+        });
         setMyListings(userListings);
       } catch (err) {
         console.error('Error loading listings:', err);
@@ -58,18 +60,21 @@ function Profile() {
           <p>You don’t have any listings yet.</p>
         ) : (
           myListings.map((listing) => (
-            <ListingCard
-              key={listing._id}
-              id={listing._id}
-              title={listing.title}
-              category={listing.category}
-              platform={listing.platform}
-              condition={listing.condition}
-              price={listing.price}
-              canDelete={true}
-              canEdit={true}
-              onDelete={handleDelete}
-            />
+            <div key={listing._id}>
+              <ListingCard
+                id={listing._id}
+                title={listing.title}
+                category={listing.category}
+                platform={listing.platform}
+                condition={listing.condition}
+                price={listing.price}
+                seller={listing.seller?._id || listing.seller}
+                user={user}
+                canDelete={true}
+                canEdit={true}
+                onDelete={handleDelete}
+              />
+            </div>
           ))
         )}
       </div>
