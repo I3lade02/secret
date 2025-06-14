@@ -5,6 +5,18 @@ export const AppContext = createContext();
 export function AppProvider({ children }) {
     const [user, setUser] = useState(null);
     const [listings, setListings] = useState([]);
+    const [alert, setAlert] = useState(null);
+
+    const showAlert = (type, message) => {
+        setAlert({ type, message });
+        setTimeout(() => setAlert(null), 4000);
+    };
+
+    const logout = () => {
+        localStorage.removeItem('token');
+        setUser(null);
+        showAlert('success', 'Logged out successfully');
+    };
 
     useEffect(() => {
         const savedUser = JSON.parse(localStorage.getItem('user'));
@@ -27,7 +39,7 @@ export function AppProvider({ children }) {
 
 
     return (
-        <AppContext.Provider value={{ user, setUser, listings, setListings }}>
+        <AppContext.Provider value={{ user, setUser, listings, setListings, alert, showAlert, logout }}>
             {children}
         </AppContext.Provider>
     );

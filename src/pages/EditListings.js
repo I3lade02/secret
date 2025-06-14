@@ -5,7 +5,6 @@ import axios from 'axios';
 export default function EditListing() {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const [formData, setFormData] = useState({
     title: '',
     category: '',
@@ -29,10 +28,9 @@ export default function EditListing() {
   }, [id]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [e.target.name]: e.target.value
     }));
   };
 
@@ -43,10 +41,10 @@ export default function EditListing() {
       await axios.put(`http://localhost:5000/api/listings/${id}`, formData, {
         headers: { Authorization: token }
       });
-      alert('Listing updated!');
+      alert('Listing updated');
       navigate(`/listing/${id}`);
     } catch (err) {
-      console.error('Error updating listing: ', err);
+      console.error('Error updating listing:', err);
       alert('Failed to update listing');
     }
   };
@@ -55,77 +53,22 @@ export default function EditListing() {
     <div className="container mt-4">
       <h2>Edit Listing</h2>
       <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label className="form-label">Title</label>
-          <input
-            name="title"
-            type="text"
-            className="form-control"
-            value={formData.title}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Category</label>
-          <select
-            name="category"
-            className="form-select"
-            value={formData.category}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select category</option>
-            <option>Game Disc</option>
-            <option>Digital Code</option>
-            <option>Figurine</option>
-            <option>Accessory</option>
-          </select>
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Platform</label>
-          <select
-            name="platform"
-            className="form-select"
-            value={formData.platform}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select platform</option>
-            <option>PlayStation</option>
-            <option>Xbox</option>
-            <option>Switch</option>
-            <option>PC</option>
-            <option>Other</option>
-          </select>
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Condition</label>
-          <input
-            name="condition"
-            type="text"
-            className="form-control"
-            value={formData.condition}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Price (CZK)</label>
-          <input
-            name="price"
-            type="number"
-            className="form-control"
-            value={formData.price}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
+        {Object.entries(formData).map(([key, value]) => (
+          <div key={key} className="mb-3">
+            <label className="form-label">
+              {key.charAt(0).toUpperCase() + key.slice(1)}
+            </label>
+            <input
+              name={key}
+              value={value}
+              onChange={handleChange}
+              className="form-control form-control-sm"
+              type={key === 'price' ? 'number' : 'text'}
+              required
+              min={key === 'price' ? '0' : undefined}
+            />
+          </div>
+        ))}
         <button type="submit" className="btn btn-primary">Save Changes</button>
       </form>
     </div>

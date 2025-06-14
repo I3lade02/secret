@@ -13,11 +13,13 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import CreateListing from './pages/CreateListing';
 import EditListing from './pages/EditListings';
+import AlertBox from './components/AlertBox';
 
 export default function App() {
   return (
     <Router>
       <Navbar />
+      <AlertBox />
       <div className='container mt-4'>
         <Routes>
           <Route path='/' element={<Home />} />

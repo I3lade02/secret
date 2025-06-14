@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import Layout from '../components/Layout';
 
 function ListingDetail() {
   const { id } = useParams();
@@ -27,14 +28,16 @@ function ListingDetail() {
   if (!listing) return <p className="mt-4 text-danger">Listing not found.</p>;
 
   return (
-    <div className="container mt-4">
-      <h2>{listing.title}</h2>
-      <p><strong>Category:</strong> {listing.category}</p>
-      <p><strong>Platform:</strong> {listing.platform}</p>
-      <p><strong>Condition:</strong> {listing.condition}</p>
-      <p><strong>Price:</strong> {listing.price} CZK</p>
-      <p><strong>Seller:</strong> {listing.seller?.username || 'Unknown'}</p>
-    </div>
+    <Layout>
+      <div className="container mt-4">
+        <h2>{listing.title}</h2>
+        <p><strong>Category:</strong> {listing.category}</p>
+        <p><strong>Platform:</strong> {listing.platform}</p>
+        <p><strong>Condition:</strong> {listing.condition}</p>
+        <p><strong>Price:</strong> {listing.price} CZK</p>
+        <p><strong>Seller:</strong> {listing.seller?.username || 'Unknown'}</p>
+      </div>
+    </Layout>
   );
 }
 

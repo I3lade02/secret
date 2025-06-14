@@ -1,36 +1,45 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function ListingCard({ id, title, category, platform, price, condition, canDelete, onDelete, canEdit }) {
+export default function ListingCard({ id, title, category, platform, price, condition, canDelete, onDelete}) {
   return (
-    <div className="card mb-3 shadow-sm">
-      <div className="card-body">
-        <h5 className="card-title">{title}</h5>
-        <h6 className="card-subtitle mb-2 text-muted">{category} · {platform}</h6>
-        <p className="card-text">
-          <strong>Condition:</strong> {condition}<br />
-          <strong>Price:</strong> {price} CZK
-        </p>
+    <div className='card mb-4 shadow-sm border-0 hover-shadow'>
+      <div className='row g-0'>
+        <div className='col-md-3 d-flex align-items-center justify-content-center bg-light'>
+          <div style={{ width: '80px', height: '80px', backgroundColor: '#ddd', borderRadius: '0.5rem'}}></div>
+        </div>
 
-        {/* ✅ Use 'id' directly here */}
-        <Link to={`/listing/${id}`} className="btn btn-primary btn-sm">
-          View Listing
-        </Link>
+        <div className='col-md-9'>
+          <div className='card-body'>
+            <h5 className='card-title mb-1'>{title}</h5>
+            <span className='badge bg-primary mb-2'>{category}</span>
 
-        {canDelete && (
-          <button className='btn btn-danger btn-sm ms-2' onClick={() => onDelete(id)}>
-            Delete
-          </button>
-        )}
+            <p className='card-text small mb-2'>
+              🎮 {platform} &nbsp; . &nbsp; 🛠 {condition}
+            </p>
 
-        {canEdit && (
-          <Link to={`/listing/${id}/edit`} className='btn btn-success btn-sm ms-2'>
-            Edit
-          </Link>
-        )}
+            <div className='d-flex justify-content-between align-items-center'>
+              <span className='fw-bold text-success'>💰 {price} CZK</span>
+
+              <div>
+                <Link to={`/listing/${id}`} className='btn btn-sm btn-outline-primary me-2'>
+                  View
+                </Link>
+
+                {canDelete && (
+                  <button className='btn btn-sm btn-outline-danger' onClick={() => onDelete(id)}>
+                    Delete
+                  </button>
+                )}
+
+                <Link to={`/listing/${id}`} className='btn btn-outline-success btn-sm ms-2'>
+                  Edit
+                </Link>
+              </div>
+            </div> 
+          </div>
+        </div>
       </div>
     </div>
   );
 }
-
-export default ListingCard;

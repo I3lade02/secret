@@ -4,9 +4,10 @@ import { AppContext } from '../context/AppContext';
 import ListingCard from '../components/ListingCard';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import Layout from '../components/Layout';
 
 function Profile() {
-  const { user } = useContext(AppContext);
+  const { user, showAlert } = useContext(AppContext);
   const [myListings, setMyListings] = useState([]);
 
   useEffect(() => {
@@ -40,37 +41,39 @@ function Profile() {
       setMyListings(myListings.filter(l => l._id !== id));
     } catch (err) {
       console.error('Failed to delete:', err);
-      alert('Could not delete listing');
+      showAlert('danger', 'Could not delete listing');
     }
   };
 
   return (
-    <div className="container mt-4">
-      <h2>Welcome, {user?.username}</h2>
-      <p>Email: {user?.email}</p>
+    <Layout>
+      <div className="container mt-4">
+        <h2>Welcome, {user?.username}</h2>
+        <p>Email: {user?.email}</p>
 
-      <Link to="/create" className="btn btn-outline-primary mb-4">+ Post New Listing</Link>
+        <Link to="/create" className="btn btn-outline-primary mb-4">+ Post New Listing</Link>
 
-      <h4>Your Listings</h4>
-      {myListings.length === 0 ? (
-        <p>You don’t have any listings yet.</p>
-      ) : (
-        myListings.map((listing) => (
-          <ListingCard
-            key={listing._id}
-            id={listing._id}
-            title={listing.title}
-            category={listing.category}
-            platform={listing.platform}
-            condition={listing.condition}
-            price={listing.price}
-            canDelete={true}
-            canEdit={true}
-            onDelete={handleDelete}
-          />
-        ))
-      )}
-    </div>
+        <h4>Your Listings</h4>
+        {myListings.length === 0 ? (
+          <p>You don’t have any listings yet.</p>
+        ) : (
+          myListings.map((listing) => (
+            <ListingCard
+              key={listing._id}
+              id={listing._id}
+              title={listing.title}
+              category={listing.category}
+              platform={listing.platform}
+              condition={listing.condition}
+              price={listing.price}
+              canDelete={true}
+              canEdit={true}
+              onDelete={handleDelete}
+            />
+          ))
+        )}
+      </div>
+    </Layout>
   );
 }
 

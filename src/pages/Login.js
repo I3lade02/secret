@@ -1,59 +1,65 @@
-// src/pages/Login.jsx
-import React, { useState, useContext } from 'react';
-import { AppContext } from '../context/AppContext';
-import { useNavigate } from 'react-router-dom';
+import React, { useContext, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { AppContext } from '../context/AppContext';
 
 function Login() {
   const { setUser } = useContext(AppContext);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const navigate = useNavigate();
+  const { showAlert } = useContext(AppContext);
 
-  const handleLogin = async (e) => {
+  const handleChange = (e) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', {
-        email,
-        password
-      });
-
-      const { token, user } = res.data;
-
-      // Save to localStorage
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
-
-      // Update context
-      setUser(user);
-
-      navigate('/profile');
+      const res = await axios.post('http://localhost:5000/api/auth/login', formData);
+      localStorage.setItem('token', res.data.token);
+      setUser(res.data.user);
+      navigate('/');
     } catch (err) {
       console.error('Login failed:', err);
-      alert('Invalid email or password');
+      showAlert('danger', 'Invalid email or password');
     }
   };
 
   return (
-    <div className="container mt-4" style={{ maxWidth: '400px' }}>
-      <h2 className="mb-4">Login</h2>
-      <form onSubmit={handleLogin}>
+    <div className="container mt-4">
+      <h2>Login</h2>
+      <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label className="form-label">Email address</label>
+          <label className="form-label">Email</label>
           <input
-            type="email" className="form-control" value={email}
-            onChange={(e) => setEmail(e.target.value)} required />
+            name="email"
+            type="email"
+            className="form-control form-control-sm"
+            placeholder="you@example.com"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div className="mb-3">
           <label className="form-label">Password</label>
           <input
-            type="password" className="form-control" value={password}
-            onChange={(e) => setPassword(e.target.value)} required />
+            name="password"
+            type="password"
+            className="form-control form-control-sm"
+            placeholder="Enter password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
         </div>
 
-        <button type="submit" className="btn btn-primary w-100">Login</button>
+        <button type="submit" className="btn btn-primary">Login</button>
       </form>
     </div>
   );

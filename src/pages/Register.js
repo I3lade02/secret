@@ -1,58 +1,76 @@
-// src/pages/Register.jsx
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
+import { AppContext } from '../context/AppContext';
+import { useNavigate } from 'react-router-dom';
 
 function Register() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail]     = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({ username: '', email: '', password: '' });
   const navigate = useNavigate();
+  const { showAlert } = useContext(AppContext);
 
-  const handleRegister = async (e) => {
+  const handleChange = (e) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      await axios.post('http://localhost:5000/api/auth/register', {
-        username,
-        email,
-        password
-      });
-
-      alert('Registered successfully!');
+      await axios.post('http://localhost:5000/api/auth/register', formData);
+      showAlert('success', 'Registered successfully!');
       navigate('/login');
     } catch (err) {
-      console.error('Register failed:', err);
-      alert('Registration failed. Try again.');
+      console.error('Registration failed:', err);
+      showAlert('danger', 'Failed to register');
     }
   };
 
   return (
-    <div className="container mt-4" style={{ maxWidth: '400px' }}>
-      <h2 className="mb-4">Register</h2>
-      <form onSubmit={handleRegister}>
+    <div className="container mt-4">
+      <h2>Register</h2>
+      <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label className="form-label">Username</label>
           <input
-            type="text" className="form-control" value={username}
-            onChange={(e) => setUsername(e.target.value)} required />
+            name="username"
+            type="text"
+            className="form-control form-control-sm"
+            placeholder="Gamer123"
+            value={formData.username}
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Email address</label>
+          <label className="form-label">Email</label>
           <input
-            type="email" className="form-control" value={email}
-            onChange={(e) => setEmail(e.target.value)} required />
+            name="email"
+            type="email"
+            className="form-control form-control-sm"
+            placeholder="you@example.com"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div className="mb-3">
           <label className="form-label">Password</label>
           <input
-            type="password" className="form-control" value={password}
-            onChange={(e) => setPassword(e.target.value)} required />
+            name="password"
+            type="password"
+            className="form-control form-control-sm"
+            placeholder="Create a password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
         </div>
 
-        <button type="submit" className="btn btn-success w-100">Register</button>
+        <button type="submit" className="btn btn-success">Register</button>
       </form>
     </div>
   );
