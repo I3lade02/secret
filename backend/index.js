@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const listingRoutes = require('./routes/listings');
+const uploadRoutes = require('./routes/upload');
 
 const authRoutes = require('./routes/auth');
 
@@ -18,6 +19,12 @@ mongoose.connect(process.env.MONGO_URI)
 //routes
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingRoutes);
+
+//Serve uploaded images
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+//API route
+app.use('/api/upload', uploadRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server is running on port: ${PORT}`));
