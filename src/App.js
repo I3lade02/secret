@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 //Components
 import Navbar from './components/Navbar';
+import AlertBox from './components/AlertBox';
+import ChatWindow from './components/ChatWindow';
 
 //Pages
 import Home from './pages/Home';
@@ -13,8 +15,8 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import CreateListing from './pages/CreateListing';
 import EditListing from './pages/EditListings';
-import AlertBox from './components/AlertBox';
-import ChatWindow from './components/ChatWindow';
+import MessagesOverview from './pages/MessagesOverview';
+import UserProfile from './pages/UserProfile';
 
 export default function App() {
   return (
@@ -30,8 +32,10 @@ export default function App() {
           <Route path='/listing/:id/edit' element={<EditListing />} />
           <Route path='/profile' element={<Profile />} />
           <Route path='/messages/:userId' element={<ChatWindow />} />
+          <Route path='/messages' element={<MessagesOverview />} />
           <Route path='/login' element={<Login />} />
           <Route path='/register'element={<Register />} />
+          <Route path='/user/:id' element={<UserProfile />} />
         </Routes>
       </div>
     </Router>

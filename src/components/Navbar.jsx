@@ -37,6 +37,9 @@ export default function Navbar() {
                 <li className="nav-item">
                   <NavLink to="/profile" className="nav-link">Profile</NavLink>
                 </li>
+                <li className='nav-item'>
+                    <NavLink to='/messages' className='nav-link'>Messages</NavLink>
+                </li>
                 <li className="nav-item">
                   <button className="btn btn-sm btn-outline-danger align-self-center m-1" onClick={handleLogout}>Logout</button>
                 </li>

@@ -20,12 +20,14 @@ export default function ChatWindow() {
                 setMessages(res.data);
             } catch (err) {
                 console.error('Error loading messages: ', err);
-                showAlert('danger', 'Failed to load messages');
+                if (user) showAlert('danger', 'Failed to load messages');
             }
         };
 
-        fetchMessages();
-    }, [userId, showAlert]);
+        if (user) {
+            fetchMessages();
+        }
+    }, [userId, user, showAlert]);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

@@ -59,9 +59,14 @@ export default function ListingDetail() {
                 <strong>Seller:</strong> {listing.seller?.username} ({listing.seller?.email})
               </p>
 
-              <Link to="/" className="btn btn-outline-secondary mt-3">
+              <Link to="/" className="btn btn-outline-secondary mt-3 me-2">
                 ⬅ Back to Listings
               </Link>
+
+              <Link className='btn btn-outline-secondary mt-3 me-2' to={`/user/${listing.seller._id}`}>
+                {listing.seller.username}
+              </Link>
+
               {user?.id !== listing.seller._id && (
                 <Link to={`/messages/${listing.seller._id}`} className='btn btn-outline-secondary mt-3'>
                   💬 Message Seller
