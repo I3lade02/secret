@@ -5,6 +5,7 @@ import App from './App';
 import { AppProvider } from './context/AppContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/custom.css';
+import 'animate.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

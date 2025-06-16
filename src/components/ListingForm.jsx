@@ -1,108 +1,94 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { AppContext } from '../context/AppContext'
 
-function ListingForm({ onSubmit }) {
+export default function ListingForm() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
     category: '',
     platform: '',
     condition: '',
-    price: ''
+    price: '',
+    image: '',
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const { showAlert } = useContext(AppContext);
 
   const handleChange = (e) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.value]: e.target.value,
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImageFile(file);
+    if (file) {
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    try {
+      let uploadedImageUrl = '';
+
+      if (imageFile) {
+        const uploadData = new FormData();
+        uploadData.append('image', imageFile);
+        const uploadRes = await axios.post('http://localhost:5000/api/upload', uploadData);
+        uploadedImageUrl = uploadRes.data.imageUrl;
+      }
+
+      const token = localStorage.getItem('token');
+      const res = await axios.post(
+        'http://localhost:5000/api/listings',
+        { ...formData, image: uploadedImageUrl },
+        { headers: { Authorization: token } }
+      );
+
+      showAlert('success', 'Listing created');
+      navigate(`/listing/${res.data._id}`);
+    } catch (err) {
+      console.error('Error creating listing: ', err);
+      showAlert('danger', 'Failed to create listing');
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h3 className="mb-4">📝 Create New Listing</h3>
+    <div className='container mt-4'>
+      <h2>Create new listing</h2>
+      <form onSubmit={handleSubmit}>
+        {/* Form inputs */}
+        {['title', 'category', 'platform', 'condition', 'price'].map((field) => (
+          <div key={field} className='mb-3'>
+            <label className='form-label'>
+              {field.charAt(0).toUpperCase() + field.slice(1)}
+            </label>
+            <input 
+              type={field === 'price' ? 'number' : 'text'}
+              name={field}
+              value={formData[field]}
+              onChange={handleChange}
+              className='form-control'
+              required
+            />
+          </div>
+        ))}
 
-      <div className="mb-3">
-        <label className="form-label">Title</label>
-        <input
-          name="title"
-          type="text"
-          className="form-control form-control-sm"
-          placeholder="e.g. God of War Ragnarok (PS5)"
-          value={formData.title}
-          onChange={handleChange}
-          required
-        />
-      </div>
+        {/* Image upload */}
+        <div className='mb-3'>
+          <label className='form-label'>Image</label>
+          <input type='file' accept='image/*' onChange={handleImageChange} className='form-control' />
+          {previewUrl && <img src={previewUrl} alt='Preview' className='img-fluid mt-2' style={{ maxWidth: '200px' }} />}
+        </div>
 
-      <div className="mb-3">
-        <label className="form-label">Category</label>
-        <select
-          name="category"
-          className="form-select form-select-sm"
-          value={formData.category}
-          onChange={handleChange}
-          required
-        >
-          <option value="">-- Select Category --</option>
-          <option>Game Disc</option>
-          <option>Digital Code</option>
-          <option>Figurine</option>
-          <option>Accessory</option>
-        </select>
-      </div>
-
-      <div className="mb-3">
-        <label className="form-label">Platform</label>
-        <select
-          name="platform"
-          className="form-select form-select-sm"
-          value={formData.platform}
-          onChange={handleChange}
-          required
-        >
-          <option value="">-- Select Platform --</option>
-          <option>PlayStation</option>
-          <option>Xbox</option>
-          <option>Switch</option>
-          <option>PC</option>
-          <option>Other</option>
-        </select>
-      </div>
-
-      <div className="mb-3">
-        <label className="form-label">Condition</label>
-        <input
-          name="condition"
-          type="text"
-          className="form-control form-control-sm"
-          placeholder="e.g. Like New, Sealed, Used"
-          value={formData.condition}
-          onChange={handleChange}
-          required
-        />
-      </div>
-
-      <div className="mb-3">
-        <label className="form-label">Price (CZK)</label>
-        <input
-          name="price"
-          type="number"
-          className="form-control form-control-sm"
-          placeholder="e.g. 499"
-          value={formData.price}
-          onChange={handleChange}
-          required
-          min="0"
-        />
-      </div>
-
-      <button type="submit" className="btn btn-success">Submit Listing</button>
-    </form>
+        <button type='submit' className='btn btn-success'>Submit listing</button>
+      </form>
+    </div>
   );
 }
-
-export default ListingForm;

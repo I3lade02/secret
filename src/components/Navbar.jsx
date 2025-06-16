@@ -1,13 +1,19 @@
 // src/components/Navbar.jsx
 import React, { useContext } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
 
 export default function Navbar() {
+  const navigate = useNavigate();
   const { user, logout } = useContext(AppContext);
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  }
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow sticky-top">
       <div className="container">
         <Link className="navbar-brand" to="/">🎮 GameSwap</Link>
 
@@ -32,7 +38,7 @@ export default function Navbar() {
                   <NavLink to="/profile" className="nav-link">Profile</NavLink>
                 </li>
                 <li className="nav-item">
-                  <button className="btn btn-sm btn-outline-light ms-2" onClick={logout}>Logout</button>
+                  <button className="btn btn-sm btn-outline-danger align-self-center m-1" onClick={handleLogout}>Logout</button>
                 </li>
               </>
             ) : (

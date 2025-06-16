@@ -4,6 +4,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const listingRoutes = require('./routes/listings');
 const uploadRoutes = require('./routes/upload');
+const path = require('path');
 
 const authRoutes = require('./routes/auth');
 

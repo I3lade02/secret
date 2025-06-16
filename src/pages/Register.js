@@ -4,7 +4,7 @@ import { AppContext } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
 
 function Register() {
-  const [formData, setFormData] = useState({ username: '', email: '', password: '' });
+  const [formData, setFormData] = useState({ username: '', email: '', password: '', confirmPassword: '' });
   const navigate = useNavigate();
   const { showAlert } = useContext(AppContext);
 
@@ -17,6 +17,12 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      showAlert('danger', 'Passwords do not match');
+      return;
+    }
+    
     try {
       await axios.post('http://localhost:5000/api/auth/register', formData);
       showAlert('success', 'Registered successfully!');
@@ -65,6 +71,18 @@ function Register() {
             className="form-control form-control-sm"
             placeholder="Create a password"
             value={formData.password}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        
+        <div className='mb-3'>
+          <label className='form-label'>Confirm password</label>
+          <input 
+            type='password'
+            className='form-control'
+            name='confirmPassword'
+            value={formData.confirmPassword}
             onChange={handleChange}
             required
           />
