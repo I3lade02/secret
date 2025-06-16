@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { AppContext } from '../context/AppContext';
 import axios from 'axios';
 import Layout from '../components/Layout';
 
 export default function ListingDetail() {
   const { id } = useParams();
   const [listing, setListing] = useState(null);
+  const { user } = useContext(AppContext);
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -60,6 +62,11 @@ export default function ListingDetail() {
               <Link to="/" className="btn btn-outline-secondary mt-3">
                 ⬅ Back to Listings
               </Link>
+              {user?.id !== listing.seller._id && (
+                <Link to={`/messages/${listing.seller._id}`} className='btn btn-outline-secondary mt-3'>
+                  💬 Message Seller
+                </Link>
+              )}
             </div>
           </div>
         </div>

@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const listingRoutes = require('./routes/listings');
 const uploadRoutes = require('./routes/upload');
 const path = require('path');
+const messageRoutes = require('./routes/messages');
 
 const authRoutes = require('./routes/auth');
 
@@ -20,6 +21,7 @@ mongoose.connect(process.env.MONGO_URI)
 //routes
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingRoutes);
+app.use('/api/messages', messageRoutes);
 
 //Serve uploaded images
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

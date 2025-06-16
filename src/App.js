@@ -14,6 +14,7 @@ import Profile from './pages/Profile';
 import CreateListing from './pages/CreateListing';
 import EditListing from './pages/EditListings';
 import AlertBox from './components/AlertBox';
+import ChatWindow from './components/ChatWindow';
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
           <Route path='/listing/:id' element={<ListingDetail />} />
           <Route path='/listing/:id/edit' element={<EditListing />} />
           <Route path='/profile' element={<Profile />} />
+          <Route path='/messages/:userId' element={<ChatWindow />} />
           <Route path='/login' element={<Login />} />
           <Route path='/register'element={<Register />} />
         </Routes>

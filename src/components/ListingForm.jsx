@@ -20,7 +20,7 @@ export default function ListingForm() {
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
-      [e.target.value]: e.target.value,
+      [e.target.name]: e.target.value,
     }));
   };
 

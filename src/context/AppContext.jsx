@@ -9,7 +9,7 @@ export function AppProvider({ children }) {
 
     const showAlert = (type, message) => {
         setAlert({ type, message });
-        setTimeout(() => setAlert(null), 4000);
+        setTimeout(() => setAlert(null), 3500);
     };
 
     const logout = () => {
@@ -39,7 +39,7 @@ export function AppProvider({ children }) {
 
 
     return (
-        <AppContext.Provider value={{ user, setUser, listings, setListings, alert, showAlert, logout }}>
+        <AppContext.Provider value={{ user, setUser, listings, setListings, alert, showAlert, setAlert, logout }}>
             {children}
         </AppContext.Provider>
     );
