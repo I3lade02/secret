@@ -24,7 +24,7 @@ export default function MessagesOverview() {
         if (user) {
             fetchConversations();
         }
-    }, [showAlert]);
+    }, [showAlert, user]);
 
     return (
         <Layout>

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
 const Message = require('../models/Message');
+const Notification = require('../models/Notification');
 
 // ✅ GET /api/messages/conversations — Must be defined BEFORE the dynamic route
 router.get('/conversations', authMiddleware, async (req, res) => {
@@ -78,6 +79,12 @@ router.post('/', authMiddleware, async (req, res) => {
 
     const saved = await newMessage.save();
     res.status(201).json(saved);
+
+    await new Notification({
+        user: receiver,
+        type: 'message',
+        text: `You have a new message from ${req.user.username}`,
+    }).save();
   } catch (err) {
     console.error('Error sending message:', err);
     res.status(500).json({ message: 'Failed to send message' });

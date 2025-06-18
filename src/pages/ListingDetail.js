@@ -23,22 +23,34 @@ export default function ListingDetail() {
   }, [id]);
 
   if (!listing) return <p className="text-center mt-5">Loading listing...</p>;
-
+  console.log('🔍 Current user:', user);
+  console.log('🧑‍💼 Listing seller:', listing?.seller);
+  console.log('🆔 user.id:', user?.id);
+  console.log('🆔 seller._id:', listing?.seller?._id);
   return (
     <Layout>
       <div className="container mt-4">
         <div className="card p-4 shadow-sm border-0">
           <div className="row g-4">
-            {/* Image Placeholder */}
+            {/* Listing Image */}
             <div className="col-md-4 text-center">
-              <div
-                style={{
-                  width: '100%',
-                  height: '250px',
-                  backgroundColor: '#eee',
-                  borderRadius: '0.5rem'
-                }}
-              ></div>
+              {listing.image ? (
+                <img
+                  src={listing.image}
+                  alt={listing.title}
+                  className="img-fluid rounded"
+                  style={{ height: '250px', objectFit: 'cover', width: '100%' }}
+                />
+              ) : (
+                <div
+                  style={{
+                    width: '100%',
+                    height: '250px',
+                    backgroundColor: '#eee',
+                    borderRadius: '0.5rem'
+                  }}
+                ></div>
+              )}
             </div>
 
             {/* Listing Info */}
@@ -55,23 +67,37 @@ export default function ListingDetail() {
                 <strong>Price:</strong> 💰 {listing.price} CZK
               </p>
 
-              <p>
-                <strong>Seller:</strong> {listing.seller?.username} ({listing.seller?.email})
-              </p>
-
-              <Link to="/" className="btn btn-outline-secondary mt-3 me-2">
-                ⬅ Back to Listings
-              </Link>
-
-              <Link className='btn btn-outline-secondary mt-3 me-2' to={`/user/${listing.seller._id}`}>
-                {listing.seller.username}
-              </Link>
-
-              {user?.id !== listing.seller._id && (
-                <Link to={`/messages/${listing.seller._id}`} className='btn btn-outline-secondary mt-3'>
-                  💬 Message Seller
-                </Link>
+              {listing.seller && (
+                <p>
+                  <strong>Seller:</strong> {listing.seller.username} ({listing.seller.email})
+                </p>
               )}
+
+              <div className="mt-3 d-flex flex-wrap gap-2">
+                <Link to="/" className="btn btn-outline-secondary">
+                  ⬅ Back to Listings
+                </Link>
+
+                {listing.seller && (
+                  <Link className="btn btn-outline-primary" to={`/user/${listing.seller._id}`}>
+                    👤 View Seller Profile
+                  </Link>
+                )}
+
+                {user ? (
+                  listing.seller &&
+                  user.id !== listing.seller._id && (
+                    <Link
+                      to={`/messages/${listing.seller._id}`}
+                      className="btn btn-outline-success"
+                    >
+                      💬 Message Seller
+                    </Link>
+                  )
+                ) : (
+                  <p className="text-muted mt-2">🔐 Log in to message the seller</p>
+                )}
+              </div>
             </div>
           </div>
         </div>

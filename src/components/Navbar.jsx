@@ -1,60 +1,102 @@
-// src/components/Navbar.jsx
-import React, { useContext } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '../context/AppContext';
+import axios from 'axios';
+import { FaBell } from 'react-icons/fa'; // FontAwesome icon
 
 export default function Navbar() {
-  const navigate = useNavigate();
   const { user, logout } = useContext(AppContext);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  }
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await axios.get('http://localhost:5000/api/notifications', {
+          headers: { Authorization: token }
+        });
+        setNotifications(res.data);
+        setUnreadCount(res.data.filter(n => !n.isRead).length);
+      } catch (err) {
+        console.error('Failed to load notifications', err);
+      }
+    };
+
+    if (user) fetchNotifications();
+  }, [user]);
+
+  const markAsRead = async (id) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.patch(`http://localhost:5000/api/notifications/${id}`, {}, {
+        headers: { Authorization: token }
+      });
+
+      setNotifications(notifications.map(n => 
+        n._id === id ? { ...n, isRead: true } : n
+      ));
+      setUnreadCount(prev => prev - 1);
+    } catch (err) {
+      console.error('Failed to mark as read', err);
+    }
+  };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow sticky-top">
+    <nav className="navbar navbar-expand-lg navbar-light bg-light sticky-top shadow-sm">
       <div className="container">
-        <Link className="navbar-brand" to="/">🎮 GameSwap</Link>
+        <Link className="navbar-brand" to="/">GameSwap</Link>
 
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-          <span className="navbar-toggler-icon"></span>
-        </button>
+        <div className="d-flex align-items-center">
+          {user && (
+            <div className="dropdown me-3">
+              <button
+                className="btn btn-light position-relative"
+                data-bs-toggle="dropdown"
+              >
+                <FaBell />
+                {unreadCount > 0 && (
+                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
 
-        <div className="collapse navbar-collapse" id="navMenu">
-          <ul className="navbar-nav me-auto">
-            <li className="nav-item">
-              <NavLink to="/" end className="nav-link">Home</NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink to="/listings" className="nav-link">Listings</NavLink>
-            </li>
-          </ul>
+              <ul className="dropdown-menu dropdown-menu-end p-2" style={{ minWidth: '250px' }}>
+                {notifications.length === 0 ? (
+                  <li className="text-muted px-2">No notifications</li>
+                ) : (
+                  notifications.map(notif => (
+                    <li
+                      key={notif._id}
+                      className={`dropdown-item small ${notif.isRead ? 'text-muted' : 'fw-bold'}`}
+                      onClick={async () => {
+                        await markAsRead(notif._id);
+                        if (notif.targetUrl) {
+                          window.location.href = notif.targetUrl;
+                        }
+                      }}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {notif.text}
+                    </li>
+                  ))
+                )}
+              </ul>
+            </div>
+          )}
 
-          <ul className="navbar-nav ms-auto">
-            {user ? (
-              <>
-                <li className="nav-item">
-                  <NavLink to="/profile" className="nav-link">Profile</NavLink>
-                </li>
-                <li className='nav-item'>
-                    <NavLink to='/messages' className='nav-link'>Messages</NavLink>
-                </li>
-                <li className="nav-item">
-                  <button className="btn btn-sm btn-outline-danger align-self-center m-1" onClick={handleLogout}>Logout</button>
-                </li>
-              </>
-            ) : (
-              <>
-                <li className="nav-item">
-                  <NavLink to="/login" className="nav-link">Login</NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink to="/register" className="nav-link">Register</NavLink>
-                </li>
-              </>
-            )}
-          </ul>
+          {user ? (
+            <>
+              <Link to="/profile" className="btn btn-outline-primary btn-sm me-2">Profile</Link>
+              <button onClick={logout} className="btn btn-outline-secondary btn-sm">Logout</button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="btn btn-outline-primary btn-sm me-2">Login</Link>
+              <Link to="/register" className="btn btn-primary btn-sm">Register</Link>
+            </>
+          )}
         </div>
       </div>
     </nav>
